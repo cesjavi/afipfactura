@@ -78,3 +78,30 @@ class AfipInvoiceClient:
             # print(f"WSFEv1 Fault String: {getattr(self.wsfe, 'FaultString', 'N/A')}")
             # print(f"WSFEv1 Fault Code: {getattr(self.wsfe, 'FaultCode', 'N/A')}")
             raise # Re-raise the exception to be handled by the caller
+
+    def get_voucher_types(self):
+        """
+        Retrieves the available voucher types from AFIP.
+
+        Returns:
+            list: A list of dictionaries, where each dictionary represents a voucher type.
+                  Example: [{'Id': '1', 'Desc': 'Factura A', 'FchDesde': '20100901', 'FchHasta': 'NULL'}, ...]
+        Raises:
+            Exception: If the call to FEParamGetTiposCbte fails.
+        """
+        print("\nRetrieving voucher types (FEParamGetTiposCbte call)...")
+        try:
+            # This call retrieves parameter data from AFIP, in this case, voucher types.
+            self.wsfe.FEParamGetTiposCbte()
+            if self.wsfe.Excepcion:
+                print(f"FEParamGetTiposCbte call reported an exception: {self.wsfe.Excepcion}")
+                print(f"WSFEv1 Observation: {self.wsfe.Obs}")
+                raise Exception(f"Failed to get voucher types: {self.wsfe.Excepcion} - {self.wsfe.Obs}")
+
+            # The result is stored in the 'TiposCbte' attribute as a list of dictionaries
+            voucher_types = self.wsfe.TiposCbte
+            print(f"Successfully retrieved {len(voucher_types)} voucher types.")
+            return voucher_types
+        except Exception as e:
+            print(f"Error calling FEParamGetTiposCbte method: {e}")
+            raise

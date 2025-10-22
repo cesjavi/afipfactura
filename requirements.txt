@@ -1,1 +1,2 @@
 pyafipws @ git+https://github.com/reingart/pyafipws.git
+setuptools
